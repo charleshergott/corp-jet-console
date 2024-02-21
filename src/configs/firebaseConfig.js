@@ -7,7 +7,14 @@ import { getStorage } from "firebase/storage"
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  
+    apiKey: 'AIzaSyDxx4PBkndi31OkRU4XmcfLbzJuk6SQq6U',
+    authDomain: 'snappbay1111.firebaseapp.com',
+    databaseURL: 'https://snappbay1111.firebaseio.com',
+    projectId: 'snappbay1111',
+    storageBucket: 'snappbay1111.appspot.com',
+    messagingSenderId: '830183832964',
+    appId: '1:830183832964:web:3020f13f077a52bfe431d1',
+    measurementId: 'G-TE9GM61BEX',
 };
 
 // Initialize Firebase

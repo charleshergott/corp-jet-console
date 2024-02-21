@@ -44,10 +44,14 @@ export default function Example() {
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                         <li className="nav-item">
-                            <a className="nav-link active" aria-current="page" href="#">Billing</a>
+                            <Link to={"/newFlight"}>
+                                <a className="nav-link active" aria-current="page" href="#">Publish flight</a>
+                            </Link>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="#">Company info</a>
+                            <Link to={"/companyInfo"}>
+                                <a className="nav-link" href="#">Company info</a>
+                            </Link>
                         </li>
                         <li className="nav-item dropdown">
                             <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -62,6 +66,9 @@ export default function Example() {
                         </li>
                         <li className="nav-item">
                             <a className="nav-link disabled" aria-disabled="true">API Integration</a>
+                        </li>
+                        <li className="nav-item">
+                            <a className="nav-link disabled" aria-disabled="true">Billing</a>
                         </li>
                     </ul>
                     <form className="d-flex" role="search">

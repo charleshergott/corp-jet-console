@@ -16,22 +16,30 @@ function App() {
 
   return (
     <div className="App">
+      <div className="main">
+        <div className="rightSide">
+          <button>CURRENT FLIGHT INFO</button>
+        </div>
+        <div className="leftSide">
+
+          <button>CUSTOMER INTERACTION</button>
+        </div>
 
 
-      {isFormOpen && <FleetInfo onClose={toggleForm} />}
+        <BrowserRouter>
 
-      <BrowserRouter>
-        <Example />
+          <Example />
 
-        <Routes>
-          <Route path="/fleetInfo" element={<FleetInfo />} />
-        </Routes>
+          <Routes>
+            <Route path="/fleetInfo" element={<FleetInfo />} />
+            {isFormOpen && <FleetInfo onClose={toggleForm} />}
+          </Routes>
 
 
-      </BrowserRouter>
+        </BrowserRouter>
 
+      </div>
     </div>
-
   );
 
 
