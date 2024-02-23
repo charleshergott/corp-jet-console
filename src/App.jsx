@@ -28,11 +28,12 @@ function App() {
 
         <BrowserRouter>
 
+
           <Example />
 
           <Routes>
-            <Route path="/fleetInfo" element={<FleetInfo />} />
-            {isFormOpen && <FleetInfo onClose={toggleForm} />}
+            <Route path="/fleetInfo" element={<FleetInfo onClose={toggleForm} />} />
+
           </Routes>
 
 
