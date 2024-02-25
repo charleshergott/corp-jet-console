@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Example from "./components/mainMenu.jsx"
-import FleetInfo from './components/fleetInfo.jsx';
+import FleetData from './components/newFlight.jsx';
+import UserData from './components/companyInfo.jsx';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
-
 
 
 function App() {
@@ -17,12 +17,22 @@ function App() {
   return (
     <div className="App">
       <div className="main">
-        <div className="rightSide">
+        {/* <div className="rightSide">
           <button>CURRENT FLIGHT INFO</button>
         </div>
         <div className="leftSide">
 
           <button>CUSTOMER INTERACTION</button>
+        </div> */}
+
+        <div className="rightSide">
+          COMPANY INFO
+          <UserData />
+
+        </div>
+        <div className="leftSide">
+          AIRCRAFT LIBRARY
+          <FleetData />
         </div>
 
 
@@ -31,10 +41,10 @@ function App() {
 
           <Example />
 
-          <Routes>
+          {/* <Routes>
             <Route path="/fleetInfo" element={<FleetInfo onClose={toggleForm} />} />
 
-          </Routes>
+          </Routes> */}
 
 
         </BrowserRouter>

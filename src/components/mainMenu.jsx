@@ -13,6 +13,7 @@ import {
 
 import { ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid'
 
+
 const products = [
     { name: 'Analytics', description: 'Get a better understanding of your traffic', href: '#', icon: ChartPieIcon },
     { name: 'Engagement', description: 'Speak directly to your customers', href: '#', icon: CursorArrowRaysIcon },
@@ -29,12 +30,15 @@ function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 
+
 export default function Example() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
     return (
         <header className="navbar navbar-expand-lg bg-body-tertiary fixed-top">
             <div className="container-fluid">
+                {/* Include the WelcomeMessage component here 
+                <WelcomeMessage />*/}
                 <a className="navbar-brand" href="#" style={{ wordWrap: 'break-word' }}>
                     WELCOME TO YOUR OPERATOR CONSOLE
                 </a>
@@ -43,15 +47,12 @@ export default function Example() {
                 </button>
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                        {/* <li className="nav-item">
+
+                            <a className="nav-link active" aria-current="page" href="#"><Link to={"/newFlight"}>Publish flight</Link></a>
+                        </li> */}
                         <li className="nav-item">
-                            <Link to={"/newFlight"}>
-                                <a className="nav-link active" aria-current="page" href="#">Publish flight</a>
-                            </Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link to={"/companyInfo"}>
-                                <a className="nav-link" href="#">Company info</a>
-                            </Link>
+                            <a className="nav-link" href="#" onClick={() => window.open('/companyInfo')}><Link to={"/companyInfo"}>Company info</Link></a>
                         </li>
                         <li className="nav-item dropdown">
                             <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">

@@ -64,3 +64,9 @@
   width: 1000px;
   height: auto;
 }
+
+.popup {
+  position: absolute;
+  top: 200px;
+  right: 500px;
+}
