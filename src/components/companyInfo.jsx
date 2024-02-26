@@ -6,22 +6,48 @@ const UserData = () => {
   const [loading, setLoading] = useState(true);
   const [selectedData, setSelectedData] = useState(null);
 
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await fetch('https://snappbay1111.firebaseio.com/userData.json');
+  //       if (!response.ok) {
+  //         throw new Error('data fetch failed', error);
+  //       }
+  //       const finalData = await response.json();
+  //       setUserData(finalData);
+  //       setLoading(false);
+  //     } catch (error) {
+  //       console.error('error fetching data', error);
+  //     }
+  //   }
+  //   fetchData();
+  // }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('https://snappbay1111.firebaseio.com/userData.json');
+        // Extract UID from the URL
+        const url = window.location.href;
+        const uidIndex = url.lastIndexOf('/') + 1;
+        const uid = url.substring(uidIndex);
+
+        // Fetch data based on the extracted UID
+        const response = await fetch(`https://snappbay1111.firebaseio.com/userData/${uid}.json`);
         if (!response.ok) {
-          throw new Error('data fetch failed', error);
+          throw new Error('Data fetch failed');
         }
-        const finalData = await response.json();
-        setUserData(finalData);
+        const userData = await response.json();
+        setUserData(userData);
         setLoading(false);
       } catch (error) {
-        console.error('error fetching data', error);
+        console.error('Error fetching data:', error);
       }
-    }
+    };
+
     fetchData();
   }, []);
+
+
 
   const handleClicked = (data) => {
     setSelectedData(data)

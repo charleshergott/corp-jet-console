@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
+import ModalForm from './modalForm';
 
 const FleetData = () => {
     const [userData, setUserData] = useState({});
@@ -24,16 +24,14 @@ const FleetData = () => {
     }, []);
 
     const handleClicked = (data) => {
-        selectedData(data)
+        setSelectedData(data)
     };
     const closeModal = () => {
-        selectedData(null)
+        setSelectedData(null)
     };
     if (loading) {
         return <div>loading...</div>
     }
-
-
 
     // Clean up function
     //return () => {

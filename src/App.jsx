@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import Example from "./components/mainMenu.jsx"
 import FleetData from './components/newFlight.jsx';
+import FleetInfo from './components/fleetInfo.jsx';
 import UserData from './components/companyInfo.jsx';
+
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
 
@@ -41,10 +43,10 @@ function App() {
 
           <Example />
 
-          {/* <Routes>
+          <Routes>
             <Route path="/fleetInfo" element={<FleetInfo onClose={toggleForm} />} />
 
-          </Routes> */}
+          </Routes>
 
 
         </BrowserRouter>
