@@ -15,7 +15,7 @@ const FleetData = () => {
                 }
                 const finalData = await response.json();
                 setUserData(finalData);
-                console.log(userData)
+                //console.log(userData)
                 setLoading(false);
             } catch (error) {
                 console.error('error fetching data', error);
@@ -25,28 +25,23 @@ const FleetData = () => {
     }, []);
 
     const handleClicked = (data) => {
-        setSelectedData(data)
+        setSelectedData(data);
     };
-    const closeModal = () => {
-        setSelectedData(null)
-    };
-    if (loading) {
-        return <div>loading...</div>
-    }
 
-    // Clean up function
-    //return () => {
-    //     unsubscribe(); // Unsubscribe from Firebase listener
-    //   };
-    // }, [uid]);
+    const closeModal = () => {
+        setSelectedData(null);
+    };
+
+    if (loading) {
+        return <div>loading...</div>;
+    }
 
     return (
         <div>
-
             <form>
                 {Object.keys(userData).map((key, index) => (
                     <ul key={index}>
-                        {userData[key].amenities && (
+                        {userData[key] && (
                             <li key={key} onClick={() => handleClicked(userData[key])}>
                                 {userData[key].amenities}
                             </li>
@@ -55,11 +50,9 @@ const FleetData = () => {
                 ))}
             </form>
 
-            {
-                selectedData && (
-                    <ModalForm userData={selectedData} onClose={closeModal} />
-                )
-            }
+            {selectedData && (
+                <ModalForm userData={selectedData} onClose={closeModal} />
+            )}
         </div>
     );
 };
