@@ -15,6 +15,7 @@ const FleetData = () => {
                 }
                 const finalData = await response.json();
                 setUserData(finalData);
+                console.log(userData)
                 setLoading(false);
             } catch (error) {
                 console.error('error fetching data', error);
