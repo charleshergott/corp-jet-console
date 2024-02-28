@@ -1,7 +1,5 @@
 import React from 'react';
 import { useState } from 'react';
-import { addDoc, collection } from 'firebase/firestore';
-import { db } from '../configs/firebaseConfig.js';
 
 const Air = ({ data, onClose }) => {
     const [mydata, setmyData] = useState({
@@ -32,15 +30,12 @@ const Air = ({ data, onClose }) => {
         onClose();
     };
 
+
+
+
+
     const submitMyData = (e) => {
         // e.preventDefault();
-        // console.log(formData);
-        const productRef = collection(db, 'operator_products');
-        addDoc(productRef, { mydata }).then(response => {
-            console.log(response)
-        }).catch(error => {
-            console.log(error.message)
-        })
         onClose();
     };
     return (

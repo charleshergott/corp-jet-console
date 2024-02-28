@@ -51,15 +51,9 @@ export default function Example() {
 
                             <a className="nav-link active" aria-current="page" href="#"><Link to={"/newFlight"}>Publish flight</Link></a>
                         </li> */}
-
-
-
                         <li className="nav-item">
                             <a className="nav-link" href="#" onClick={() => window.open('/companyInfo')}><Link to={"/companyInfo"}>Company info</Link></a>
                         </li>
-
-
-
                         <li className="nav-item dropdown">
                             <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Fleet

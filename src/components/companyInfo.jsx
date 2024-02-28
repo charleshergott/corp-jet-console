@@ -1,35 +1,24 @@
 import React, { useState, useEffect } from 'react';
-
+import { BrowserRouter as Router, useLocation } from 'react-router-dom'; // Import BrowserRouter and useLocation
 
 const UserData = () => {
   const [userData, setUserData] = useState({});
   const [loading, setLoading] = useState(true);
   const [selectedData, setSelectedData] = useState(null);
+  const [userID, setUserID] = useState();
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await fetch('https://snappbay1111.firebaseio.com/userData.json');
-  //       if (!response.ok) {
-  //         throw new Error('data fetch failed', error);
-  //       }
-  //       const finalData = await response.json();
-  //       setUserData(finalData);
-  //       setLoading(false);
-  //     } catch (error) {
-  //       console.error('error fetching data', error);
-  //     }
-  //   }
-  //   fetchData();
-  // }, []);
+  // Use useLocation to get the current location
+  const location = useLocation();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Extract UID from the URL
-        const url = window.location.href;
-        const uidIndex = url.lastIndexOf('/') + 1;
-        const uid = url.substring(uidIndex);
+        // Extract UID from the URL params
+        const params = new URLSearchParams(location.search);
+        const uid = params.get('uid');
+
+        // Set UID state
+        setUserID(uid);
 
         // Fetch data based on the extracted UID
         const response = await fetch(`https://snappbay1111.firebaseio.com/userData/${uid}.json`);
@@ -45,46 +34,54 @@ const UserData = () => {
     };
 
     fetchData();
-  }, []);
 
-
+  }, [location.search]);
 
   const handleClicked = (data) => {
-    setSelectedData(data)
+    setSelectedData(data);
   };
+
   const closeModal = () => {
-    setSelectedData(null)
+    setSelectedData(null);
   };
+
   if (loading) {
-    return <div>loading...</div>
+    return <div>loading...</div>;
   }
-
-
-
-  // Clean up function
-  //return () => {
-  //     unsubscribe(); // Unsubscribe from Firebase listener
-  //   };
-  // }, [uid]);
 
   return (
     <div>
-      {/* <h1>data</h1> */}
       <form>
-        {Object.keys(userData).map((key, index) => (
-          <ul key={index}>
-            {userData[key].company && (
-              <li key={key} onClick={() => handleClicked(userData[key])}>
-                {userData[key].company}
-              </li>
-            )}
+
+        <p>UID: {userID}</p>
+        {userData && Object.keys(userData).map((key, index) => (
+
+          < ul key={index} >
+
+            {
+              userData[key].uid === userID && (
+                <li key={key + '_company'}>{userData[key].company}</li>
+              )
+            }
+            {
+              userData[key].uid === userID && (
+                <li key={key + '_country'}>{userData[key].country}</li>
+              )
+            }
           </ul>
         ))}
       </form>
 
-    </div>
+
+
+    </div >
   );
 };
 
-export default UserData;
+const UserDataWithRouter = () => (
+  <Router>
+    <UserData />
+  </Router>
+);
 
+export default UserDataWithRouter;
