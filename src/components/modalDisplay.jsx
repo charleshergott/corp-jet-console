@@ -2,20 +2,24 @@ import React from 'react';
 import { useState } from 'react';
 import { addDoc, collection } from 'firebase/firestore';
 import { db } from '../configs/firebaseConfig.js';
+import { Images } from './image.jsx';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import TimePicker from 'react-time-picker';
 
 const Air = ({ data, onClose }) => {
     const [mydata, setmyData] = useState({
         amenities: data.amenities || '',
         model: data.model || '',
-        name: data.name || '',
         oem: data.oem || '',
         pictures: data.pictures || '',
         seats: data.seats || '',
-        tailnumber: data.tailnumber || '',
+        tailNumber: data.tailNumber || '',
         type: data.type || '',
         departureDate: '',
         departureTime: '',
-        departureAirport: '',
+        Latitude: '',
+        Longitude: '',
         arrivalAirport: '',
         price: '',
     })
@@ -32,6 +36,11 @@ const Air = ({ data, onClose }) => {
         onClose();
     };
 
+    const [startDate, setStartDate] = useState(null);
+
+    const [time, setTime] = useState('12:00');
+
+
     const submitMyData = (e) => {
         // e.preventDefault();
         // console.log(formData);
@@ -45,10 +54,13 @@ const Air = ({ data, onClose }) => {
     };
     return (
         <div style={styles.container}>
+
             <span className="close" onClick={handleClose} style={styles.closeButton}>&times;</span>
-            <h2 style={styles.heading}>Aircraft Form</h2>
+            <h2 style={styles.heading}>Publish Aircraft to Map</h2>
             <form style={styles.form} onSubmit={submitMyData}>
+
                 <div style={styles.inputRow}>
+
                     <div style={styles.inputGroup}>
                         <label htmlFor='amenities' style={styles.label}>Amenities:</label>
                         <input
@@ -57,7 +69,7 @@ const Air = ({ data, onClose }) => {
                             value={mydata.amenities || ''}
                             onChange={handleChange}
                             style={styles.input}
-
+                            required
                         />
                     </div>
                     <div style={styles.inputGroup}>
@@ -68,22 +80,14 @@ const Air = ({ data, onClose }) => {
                             value={mydata.model || ''}
                             onChange={handleChange}
                             style={styles.input}
-
+                            required
                         />
                     </div>
+
                 </div>
-                <div style={styles.inputRow}>
-                    <div style={styles.inputGroup}>
-                        <label htmlFor='name' style={styles.label}>Name:</label>
-                        <input
-                            type='text'
-                            name='name'
-                            value={mydata.name || ''}
-                            onChange={handleChange}
-                            style={styles.input}
 
-                        />
-                    </div>
+                <div style={styles.inputRow}>
+
                     <div style={styles.inputGroup}>
                         <label htmlFor='oem' style={styles.label}>OEM:</label>
                         <input
@@ -92,12 +96,10 @@ const Air = ({ data, onClose }) => {
                             value={mydata.oem || ''}
                             onChange={handleChange}
                             style={styles.input}
-
+                            required
                         />
                     </div>
-                </div>
-                <div style={styles.inputRow}>
-                    <div style={styles.inputGroup}>
+                    {/* <div style={styles.inputGroup}>
                         <label htmlFor='pictures' style={styles.label}>Pictures:</label>
                         <input
                             type='text'
@@ -107,7 +109,16 @@ const Air = ({ data, onClose }) => {
                             style={styles.input}
                             required
                         />
+                    </div> */}
+                    <div style={styles.inputGroup}>
+
+                        <Images
+                        />
                     </div>
+                </div>
+
+                <div style={styles.inputRow}>
+
                     <div style={styles.inputGroup}>
                         <label htmlFor='seats' style={styles.label}>Seats:</label>
                         <input
@@ -116,22 +127,24 @@ const Air = ({ data, onClose }) => {
                             value={mydata.seats || ''}
                             onChange={handleChange}
                             style={styles.input}
-
+                            required
+                        />
+                    </div>
+                    <div style={styles.inputGroup}>
+                        <label htmlFor='tailNumber' style={styles.label}>Tail Number:</label>
+                        <input
+                            type='text'
+                            name='tailNumber'
+                            value={mydata.tailNumber || ''}
+                            onChange={handleChange}
+                            style={styles.input}
+                            required
                         />
                     </div>
                 </div>
-                <div style={styles.inputRow}>
-                    <div style={styles.inputGroup}>
-                        <label htmlFor='tailnumber' style={styles.label}>Tail Number:</label>
-                        <input
-                            type='text'
-                            name='tailnumber'
-                            value={mydata.tailnumber || ''}
-                            onChange={handleChange}
-                            style={styles.input}
 
-                        />
-                    </div>
+                <div style={styles.inputRow}>
+
                     <div style={styles.inputGroup}>
                         <label htmlFor='type' style={styles.label}>Type:</label>
                         <input
@@ -144,84 +157,102 @@ const Air = ({ data, onClose }) => {
                         />
                     </div>
                 </div>
+
                 <div style={styles.inputRow}>
+
                     <div style={styles.inputGroup}>
-                        <label htmlFor='departureDate' style={styles.label}>Dep. Date:</label>
-                        <input
-                            type='text'
-                            name='departureDate'
-                            value={mydata.departureDate}
-                            onChange={handleChange}
-                            style={styles.input}
-                            placeholder='departure date'
+                        <label htmlFor='departureDate' style={styles.label}>Departure Date:</label>
+
+                        <DatePicker
+                            selected={startDate}
+                            onChange={date => setStartDate(date)}
+                            dateFormat="MM/dd/yyyy"
+                            placeholderText="Select Departure Date"
                             required
                         />
                     </div>
                     <div style={styles.inputGroup}>
-                        <label htmlFor='departureTime' style={styles.label}>Dep. Time:</label>
+                        <label htmlFor='departureTime' style={styles.label}>Departure Time:</label>
                         <input
                             type='text'
                             name='departureTime'
                             value={mydata.departureTime}
                             onChange={handleChange}
                             style={styles.input}
-                            placeholder='Departure time'
+                            placeholder='Departure Time'
                             required
                         />
                     </div>
                 </div>
+
                 <div style={styles.inputRow}>
+
                     <div style={styles.inputGroup}>
-                        <label htmlFor='departureAirport' style={styles.label}>Dep. Airport:</label>
+                        <label htmlFor='Latitude' style={styles.label}>Departure Airport Latitude:</label>
                         <input
                             type='text'
-                            name='departureAirport'
-                            value={mydata.departureAirport}
+                            name='Latitude'
+                            value={mydata.Latitude}
                             onChange={handleChange}
                             style={styles.input}
-                            placeholder='Departure Airport'
+                            placeholder='Departure Airport Lat.'
                             required
                         />
                     </div>
                     <div style={styles.inputGroup}>
-                        <label htmlFor='arrivalAirport' style={styles.label}>Arv. Airport:</label>
+                        <label htmlFor='Longitude' style={styles.label}>Departure Airport Longitude:</label>
+                        <input
+                            type='text'
+                            name='Longitude'
+                            value={mydata.Longitude}
+                            onChange={handleChange}
+                            style={styles.input}
+                            placeholder='Departure Airport Long.'
+                            required
+                        />
+                    </div>
+                </div>
+
+                <div style={styles.inputRow}>
+
+                    <div style={styles.inputGroup}>
+                        <label htmlFor='arrivalAirport' style={styles.label}>Arrival Airport:</label>
                         <input
                             type='text'
                             name='arrivalAirport'
                             value={mydata.arrivalAirport}
                             onChange={handleChange}
                             style={styles.input}
-                            placeholder='Arrival arirport'
+                            placeholder='Arrival Airport'
                             required
                         />
                     </div>
-                </div>
-                <div style={styles.inputRow}>
                     <div style={styles.inputGroup}>
-                        <label htmlFor='price' style={styles.label2}>Price:</label>
+                        <label htmlFor='price' style={styles.label}>Price:</label>
                         <input
                             type='text'
                             name='price'
                             value={mydata.price}
                             onChange={handleChange}
-                            style={styles.input2}
-                            placeholder='enter price'
+                            style={styles.input}
+                            placeholder='Price for the whole Aircraft'
                             required
                         />
                     </div>
-                    <button>SUBMIT</button>
                 </div>
 
-            </form>
-        </div>
+                <button>SUBMIT</button>
+            </form >
+        </div >
     );
 };
 
 const styles = {
     container: {
         position: 'absolute',
-        top: '50%',
-        left: '50%',
+        top: '60%',
+        right: '-15%',
+        // left: '50%',
         transform: 'translate(-50%, -50%)',
         backgroundColor: '#f4f4f4',
         padding: '20px',
@@ -238,7 +269,7 @@ const styles = {
         fontWeight: 'bold',
     },
     heading: {
-        marginBottom: '20px',
+        marginBottom: '10px',
         textAlign: 'center',
         color: '#333',
     },
@@ -247,36 +278,48 @@ const styles = {
     },
     inputRow: {
         display: 'flex',
-        marginBottom: '15px',
+        marginBottom: '10px',
     },
     inputGroup: {
         flex: 1,
-        marginRight: '10px',
+        marginRight: '0px',
     },
+
     label: {
         marginBottom: '2px',
         color: '#555',
-        fontSize: '12px'
+        fontSize: '10px',
+        textAlign: 'left',
     },
 
     label2: {
         marginBottom: '2px',
         color: '#555',
-        fontSize: '12px',
-        width: '50px'
+        fontSize: '10px',
+        width: '50px',
+        textAlign: 'left',
     },
     input: {
-        width: '60%',
-        padding: '5px',
+
         borderRadius: '3px',
         border: '1px solid #ccc',
+        width: '100%',
+        padding: '3px 10px',
+        margin: '8px 0px 8px 5px',
+        boxSizing: 'border-box',
     },
+
+
+
     input2: {
-        width: '30%',
-        padding: '5px',
         borderRadius: '3px',
         border: '1px solid #ccc',
+        width: '50%',
+        padding: '3px 10px',
+        margin: '8px 0px 8px -5px',
+        boxSizing: 'border-box',
     },
+
 };
 
 export default Air;

@@ -38,12 +38,12 @@ const FleetData = () => {
 
     return (
         <div>
-            <form>
+            <form style={styles.aircraftList}>
                 {Object.keys(userData).map((key, index) => (
-                    <ul key={index}>
+                    <ul style={styles.aircraftListUl} key={index}>
                         {userData[key] && (
                             <li key={key} onClick={() => handleClicked(userData[key])}>
-                                {userData[key].amenities}
+                                {userData[key].tailNumber}
                             </li>
                         )}
                     </ul>
@@ -56,6 +56,27 @@ const FleetData = () => {
         </div>
     );
 };
+
+const styles = {
+    aircraftList: {
+        border: 'solid 0px blue',
+        marginTop: '10px',
+
+    },
+
+    aircraftListUl: {
+        border: 'solid 1px blue',
+        borderRadius: '3px',
+        border: '0px solid #ccc',
+        boxShadow: '0px 10px 10px rgba(0, 0, 0, 0.8)',
+        padding: '5px',
+        cursor: 'pointer',
+        listStyleType: 'none',
+    }
+}
+
+
+
 
 export default FleetData;
 

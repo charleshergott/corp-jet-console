@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 // import { Dialog, Disclosure, Popover, Transition } from '@headlessui/react'
 import {
@@ -34,8 +34,25 @@ function classNames(...classes) {
 export default function Example() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
+    // useEffect(() => {
+    //     (function () {
+    //         function onTidioChatApiReady() {
+    //             window.tidioChatApi.hide();
+    //         }
+
+    //         if (window.tidioChatApi) {
+    //             window.tidioChatApi.on("ready", onTidioChatApiReady);
+    //         }
+
+    //         document.querySelector(".chat-button").addEventListener("click", function () {
+    //             window.tidioChatApi.show();
+    //             window.tidioChatApi.open();
+    //         });
+    //     })();
+    // }, [])
+
     return (
-        <header className="navbar navbar-expand-lg bg-body-tertiary fixed-top">
+        <header className="navbar navbar-expand-lg bg-body-tertiary">
             <div className="container-fluid">
                 {/* Include the WelcomeMessage component here 
                 <WelcomeMessage />*/}
@@ -49,34 +66,42 @@ export default function Example() {
                     <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                         {/* <li className="nav-item">
 
+
+fixed-top
+
+
                             <a className="nav-link active" aria-current="page" href="#"><Link to={"/newFlight"}>Publish flight</Link></a>
                         </li> */}
 
 
 
-                        <li className="nav-item">
-                            <a className="nav-link" href="#" onClick={() => window.open('/companyInfo')}><Link to={"/companyInfo"}>Company info</Link></a>
-                        </li>
+                        {/* <li className="nav-item">
+                             <a className="nav-link active" aria-current="page" href="#">Support</a> 
+                        <button className="chat-button">Live Chat</button>
+                    </li> */}
 
+
+                        <li className="nav-item">
+                            <a className="nav-link disabled" aria-disabled="true">Billing</a>
+                        </li>
 
 
                         <li className="nav-item dropdown">
                             <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Fleet
+                                API Integration
                             </a>
                             <ul className="dropdown-menu">
-                                <li><a className="dropdown-item" href="#">Aircraft 1</a></li>
-                                <li><a className="dropdown-item" href="#">Aircraft 2</a></li>
+                                <li><a className="dropdown-item" href="#">FLEXX</a></li>
+                                <li><a className="dropdown-item" href="#">Optirise</a></li>
+                                <li><a className="dropdown-item" href="#">LEON Connect</a></li>
                                 <li><hr className="dropdown-divider" /></li>
-                                <li><Link to={"/fleetInfo"}>Create new Aircraft</Link></li>
+                                <li><a className="dropdown-item" href="#">Other</a></li>
                             </ul>
                         </li>
-                        <li className="nav-item">
+                        {/* <li className="nav-item">
                             <a className="nav-link disabled" aria-disabled="true">API Integration</a>
-                        </li>
-                        <li className="nav-item">
-                            <a className="nav-link disabled" aria-disabled="true">Billing</a>
-                        </li>
+                        </li> */}
+
                     </ul>
                     <form className="d-flex" role="search">
                         <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
@@ -84,6 +109,6 @@ export default function Example() {
                     </form>
                 </div>
             </div>
-        </header>
+        </header >
     )
 }

@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { getStorage, ref, uploadBytes } from "firebase/storage";
+import { AddPhoto } from "./addPhoto"
 
 
 
@@ -11,8 +13,9 @@ function FleetInfo({ onClose }) {
         type: '',
         seats: '',
         amenities: '',
-        pictures: '',
-    })
+        pictures: null,
+    });
+
     const submitData = (e) => {
         e.preventDefault();
         const formDataJson = JSON.stringify(formData);
@@ -44,97 +47,151 @@ function FleetInfo({ onClose }) {
     }
     const handleChangeData = (e) => {
         const { name, value } = e.target;
-        setFormData(previousData => ({
-            ...previousData, [name]: value
-        }))
+        // setFormData(previousData => ({
+        //     ...previousData, [name]: value
+        setFormData({
+            ...formData, [name]: value
+        });
     }
     // Function to toggle the form visibility
     const toggleForm = () => {
+        // setIsOpen(!isOpen);
+        // setIsOpen(prevState => !prevState);
         setIsOpen(!isOpen);
     };
 
+    const styles = {
+
+        container: {
+            // position: isOpen ? 'fixed' : 'absolute', // Update position based on isOpen state
+            position: 'absolute',
+            top: isOpen ? '55%' : '40%',
+            left: isOpen ? '70%' : '-15%',
+            transform: isOpen ? 'translate(-50%, -50%)' : 'translate(0%, 0%)',
+            backgroundColor: '#BE9F80',
+            padding: '10px',
+            borderRadius: '5px',
+            boxShadow: '0 0 10px rgba(0, 0, 0, 0.8)',
+            maxWidth: '600px',
+
+        }
+    }
+
+
+
     return (
-        <div>
-            <div style={styles.container}>
-                <button onClick={toggleForm}>Open Form</button>
-                {isOpen && (
-                    <div className="popup">
 
-                        <form className="needs-validation" noValidate onSubmit={submitData}>
-                            <div className="">
-                                <label htmlFor="tailNumber" className="form-label"></label>
-                                <input name="tailNumber" type="text" className="form-control" value={formData.tailNumber} onChange={handleChangeData} placeholder="Tail Number" defaultValue="" required />
-                                <div className="valid-feedback">
-                                    Looks good!
-                                </div>
-                            </div>
-                            <div className="">
-                                <label htmlFor="oem" className="form-label"></label>
-                                <input name="oem" type="text" className="form-control" value={formData.oem} onChange={handleChangeData} placeholder="OEM" defaultValue="" required />
-                                <div className="valid-feedback">
-                                    Looks good!
-                                </div>
-                            </div>
-                            <div className="">
-                                <label htmlFor="model" className="form-label"></label>
-                                <input name="model" type="text" className="form-control" value={formData.model} onChange={handleChangeData} placeholder="Model" defaultValue="" required />
-                                <div className="valid-feedback">
-                                    Looks good!
-                                </div>
-                            </div>
-                            <div className="">
-                                <label htmlFor="type" className="form-label"></label>
-                                <input name="type" type="text" className="form-control" value={formData.type} onChange={handleChangeData} placeholder="Type" defaultValue="" required />
-                                <div className="valid-feedback">
-                                    Looks good!
-                                </div>
-                            </div>
-                            <div className="">
-                                <label htmlFor="seats" className="form-label"></label>
-                                <input name="seats" type="text" className="form-control" value={formData.seats} onChange={handleChangeData} placeholder="Seats" defaultValue="" required />
-                                <div className="valid-feedback">
-                                    Looks good!
-                                </div>
-                            </div>
-                            <div className="">
-                                <label htmlFor="amenities" className="form-label"></label>
-                                <input name="amenities" type="text" className="form-control" value={formData.amenities} onChange={handleChangeData} placeholder="Amenities" defaultValue="" required />
-                                <div className="valid-feedback">
-                                    Looks good!
-                                </div>
-                            </div>
-                            <div className="">
-                                <label htmlFor="pictures" className="form-label"></label>
-                                <input name="pictures" type="text" className="form-control" value={formData.pictures} onChange={handleChangeData} placeholder="Pictures" defaultValue="" required />
-                                <div className="valid-feedback">
-                                    Looks good!
-                                </div>
-                            </div>
-                            <button type="button" className="close-button" onClick={onClose}>Close</button>
-                            <div className="">
-                                <button className="btn btn-primary" type="submit">Submit form</button>
-                            </div>
+        <div style={styles.container}>
+            <button onClick={toggleForm} >
+                {isOpen ? 'Close Form' : ' Publish new Aircraft to Library'}</button>
 
-                        </form>
+            {isOpen && (
+                <form className="needs-validation" noValidate onSubmit={submitData}>
+
+
+                    {/* <form className="needs-validation" noValidate onSubmit={submitData}> */}
+                    <div className="">
+                        <label htmlFor="tailNumber" className="form-label"></label>
+                        <input name="tailNumber" type="text" className="form-control" value={formData.tailNumber} onChange={handleChangeData} placeholder="Tail Number" defaultValue="" required />
+                        <div className="valid-feedback">
+                            Looks good!
+                        </div>
                     </div>
-                )}
-            </div>
+                    <div className="">
+                        <label htmlFor="oem" className="form-label"></label>
+                        <input name="oem" type="text" className="form-control" value={formData.oem} onChange={handleChangeData} placeholder="OEM" defaultValue="" required />
+                        <div className="valid-feedback">
+                            Looks good!
+                        </div>
+                    </div>
+                    <div className="">
+                        <label htmlFor="model" className="form-label"></label>
+                        <input name="model" type="text" className="form-control" value={formData.model} onChange={handleChangeData} placeholder="Model" defaultValue="" required />
+                        <div className="valid-feedback">
+                            Looks good!
+                        </div>
+                    </div>
+                    <div className="">
+                        <label htmlFor="type" className="form-label"></label>
+                        <input name="type" type="text" className="form-control" value={formData.type} onChange={handleChangeData} placeholder="Type" defaultValue="" required />
+                        <div className="valid-feedback">
+                            Looks good!
+                        </div>
+                    </div>
+                    <div className="">
+                        <label htmlFor="seats" className="form-label"></label>
+                        <input name="seats" type="text" className="form-control" value={formData.seats} onChange={handleChangeData} placeholder="Seats" defaultValue="" required />
+                        <div className="valid-feedback">
+                            Looks good!
+                        </div>
+                    </div>
+                    <div className="">
+                        <label htmlFor="amenities" className="form-label"></label>
+                        <input name="amenities" type="text" className="form-control" value={formData.amenities} onChange={handleChangeData} placeholder="Amenities" defaultValue="" required />
+                        <div className="valid-feedback">
+                            Looks good!
+                        </div>
+                    </div>
+
+                    {/* <div className="">
+                                <label htmlFor="pictures" className="form-label"></label>
+                                <input 
+                                name="pictures" 
+                                type="text" 
+                                className="form-control" 
+                                value={formData.pictures} 
+                                onChange={handleChangeData} 
+                                placeholder="Pictures" 
+                                defaultValue="" 
+                                required />
+                                <div className="valid-feedback">
+                                    Looks good!
+                                </div>
+                            </div> */}
+
+                    <div className="">
+                        <AddPhoto />
+                    </div>
+
+                    {/* <button type="button" className="close-button" onClick={onClose}>Close</button> */}
+
+                    <div className="">
+                        <button className="btn btn-primary" type="submit">Submit form</button>
+                    </div>
+                    {/* <div>
+                            <button className="close-button" onClick={onClose}>Close</button>
+                        </div> */}
+
+                    {/* <div>
+                            <div style={styles.container}>
+                               <button onClick={toggleForm}>Open Form</button> 
+
+                               {isOpen && (
+                                    <form className="needs-validation" noValidate onSubmit={submitData}>
+                                       
+
+
+                                        <button className="close-button" onClick={onClose}>Close</button> 
+                                       <div className="">
+                                            <button className="btn btn-primary" type="submit">Submit form</button>
+                                        </div> 
+                                    </form>
+                                )}
+                            </div>
+                        </div>   */}
+                    {/* </form> */}
+
+                </form>
+
+            )}
+
         </div>
-    );
+
+    )
 }
 
 const styles = {
-    container: {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        backgroundColor: '#f4f4f4',
-        padding: '20px',
-        borderRadius: '5px',
-        boxShadow: '0 0 10px rgba(0, 0, 0, 0.8)',
-        maxWidth: '600px',
-    },
+
     closeButton: {
         cursor: 'pointer',
         position: 'absolute',
@@ -144,7 +201,7 @@ const styles = {
         fontWeight: 'bold',
     },
     heading: {
-        marginBottom: '20px',
+        marginBottom: '10px',
         textAlign: 'center',
         color: '#333',
     },
@@ -153,14 +210,14 @@ const styles = {
     },
     inputRow: {
         display: 'flex',
-        marginBottom: '15px',
+        marginBottom: '10px',
     },
     inputGroup: {
         flex: 1,
         marginRight: '10px',
     },
     label: {
-        marginBottom: '2px',
+        marginBottom: '0px',
         color: '#555',
         fontSize: '12px'
     },
@@ -173,16 +230,18 @@ const styles = {
     },
     input: {
         width: '60%',
-        padding: '5px',
+        padding: '2px',
         borderRadius: '3px',
         border: '1px solid #ccc',
     },
     input2: {
         width: '30%',
-        padding: '5px',
+        padding: '2px',
         borderRadius: '3px',
         border: '1px solid #ccc',
     },
+
+
 };
 
 export default FleetInfo;

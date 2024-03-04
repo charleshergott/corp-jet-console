@@ -3,6 +3,7 @@ import Example from "./components/mainMenu.jsx"
 import FleetData from './components/newFlight.jsx';
 import FleetInfo from './components/fleetInfo.jsx';
 import UserData from './components/companyInfo.jsx';
+import Login from './components/welcomeScreen.jsx';
 
 
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
@@ -18,39 +19,37 @@ function App() {
   };
 
   return (
-    <div className="App">
 
+    <div className="main">
+      <div className='AppWrapper'>
+        <div className="App">
+          <div className="rightSide">
 
-      <div className="rightSide">
-        COMPANY INFO
-        <UserData />
-
+            <UserData />
+          </div>
+          <div className="leftSide">
+            AIRCRAFT LIBRARY
+            <FleetData />
+          </div>
+        </div>
+        <div className='client'>
+          CLIENT INTERFACE
+        </div>
       </div>
 
-      <div className="leftSide">
-        AIRCRAFT LIBRARY
-        <FleetData />
-      </div>
-
+      <FleetInfo />
 
       <BrowserRouter>
 
-        <Routes>
-          <Route path="/fleetInfo" element={<FleetInfo onClose={toggleForm} />} />
-        </Routes>
+        <Example />
+        <Login />
+      </BrowserRouter >
 
-        <div className="main">
-
-
-
-
-          <Example />
-
-        </div>
-      </BrowserRouter>
     </div>
-  );
 
+
+
+  );
 }
 
 export default App;

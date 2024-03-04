@@ -27,6 +27,7 @@ const UserData = () => {
         }
         const userData = await response.json();
         setUserData(userData);
+        console.log(userData);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -51,12 +52,21 @@ const UserData = () => {
 
   return (
     <div>
-      <form>
+      <form style={styles.companyInfo}>
+        {userData && <>
 
-        <p>UID: {userID}</p>
-        {userData && Object.keys(userData).map((key, index) => (
+          <p>Your Company: {userData.company}</p>
+          <p>Your Name: {userData.name}</p>
+          <p>Your Surname: {userData.surname}</p>
+          <p>Your Phone Number: {userData.phone}</p>
+          <p>Your Country: {userData.country}</p>
 
-          < ul key={index} >
+        </>
+        }
+
+        {/* {userData && Object.keys(userData).map((key, index) => (
+
+          < ul style={styles.companyListUl} key={index} >
 
             {
               userData[key].uid === userID && (
@@ -69,7 +79,7 @@ const UserData = () => {
               )
             }
           </ul>
-        ))}
+        ))} */}
       </form>
 
 
@@ -77,6 +87,22 @@ const UserData = () => {
     </div >
   );
 };
+
+
+const styles = {
+  companyInfo: {
+    border: 'solid 0px blue',
+
+  },
+
+  companyListUl: {
+    border: 'solid 1px blue',
+    borderRadius: '3px',
+    border: '1px solid #ccc',
+    padding: '5px',
+    cursor: 'pointer',
+  }
+}
 
 const UserDataWithRouter = () => (
   <Router>
