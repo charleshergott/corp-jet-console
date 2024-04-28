@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Home</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow-y: auto;
+            /* Enable vertical scrolling */
+        }
+
+        /* Add any additional styles as needed */
+    </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <main>
+        <div class="inputWrapper" style="border: solid">
+            <select id="aircraft" placeholder="aircraft">
+                <option value="">Choose an Aircraft</option>
+            </select>
+            <div>
+                <label>Departure</label>
+                <input id="airportInput" placeholder="Enter Airport Name, City or ICAO Code" />
+                <div id="airportName" class="airfield_data">
+
+                </div>
+                <div id="airportCity" class="airfield_data">
+
+                </div>
+                <div id="airportICAO" class="airfield_data">
+
+                </div>
+                <div id="airportLatitude" class="airfield_data">
+
+                </div>
+                <div id="airportLongitude" class="airfield_data">
+
+                </div>
+                <div id="airportTimeZone" class="airfield_data">
+
+                </div>
+                <div id="airportCountry" class="airfield_data">
+
+                </div>
+                <div id="airportState" class="airfield_data">
+
+                </div>
+            </div>
+
+            <div>
+                <label>Arrival</label>
+                <input id="arrivalCityInput" placeholder="Enter Airport Name, City or ICAO Code" />
+                <div id="airportNamea" class="airfield_data">
+
+                </div>
+                <div id="airportCitya" class="airfield_data">
+
+                </div>
+                <div id="airportICAOa" class="airfield_data">
+
+                </div>
+                <div id="airportLatitudea" class="airfield_data">
+
+                </div>
+                <div id="airportLongitudea" class="airfield_data">
+
+                </div>
+                <div id="airportTimeZonea" class="airfield_data">
+
+                </div>
+                <div id="airportCountrya" class="airfield_data">
+
+                </div>
+                <div id="airportStatea" class="airfield_data">
+
+                </div>
+            </div>
+            <div>
+                <label>Price</label>
+                <input id="price" placeholder="price" />
+                <label>Seats</label>
+                <input id="seats" placeholder="seats" />
+                <label>Departure Date</label>
+                <input id="departureDate" placeholder="departure date" />
+            </div>
+            <div id="departureAirportDropdown" class="dropdown-content"></div>
+            <div id="arrivalCityDropdown" class="dropdown-content"></div>
+        </div>
+        <button id="registerButton">Register Flight</button>
+        <div id="publishedInfo"></div>
+        <button id="uploadInfoButton">Upload to Map</button>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.4.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.4.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore.js"></script>
+
+    <script type="module">
+        console.log('x');
+        import { serverTimestamp } from 'https://www.gstatic.com/firebasejs/9.14.0/firebase-firestore.js';
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.14.0/firebase-app.js';
+        import {
+            getFirestore,
+            collection,
+            addDoc,
+            getDocs,
+        } from 'https://www.gstatic.com/firebasejs/9.14.0/firebase-firestore.js';
+        import {
+            getStorage,
+            ref,
+            getDownloadURL,
+            uploadBytes,
+        } from 'https://www.gstatic.com/firebasejs/9.14.0/firebase-storage.js';
+
+        const firebaseConfig = {
+            apiKey: 'AIzaSyDxx4PBkndi31OkRU4XmcfLbzJuk6SQq6U',
+            authDomain: 'snappbay1111.firebaseapp.com',
+            databaseURL: 'https://snappbay1111.firebaseio.com',
+            projectId: 'snappbay1111',
+            storageBucket: 'snappbay1111.appspot.com',
+            messagingSenderId: '830183832964',
+            appId: '1:830183832964:web:3020f13f077a52bfe431d1',
+            measurementId: 'G-TE9GM61BEX',
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const firestore = getFirestore(app);
+        const storage = getStorage(app);
+        const db = getFirestore(app);
+        const authToken = 'Wwmh3mUG3fdtZ6HejY42S0PU7NT2';
+
+        // Function to retrieve aircraft types from Firestore
+        const getAircraftTypes = async () => {
+            const aircraftsSnapshot = await getDocs(
+                collection(db, 'AircraftsPictures')
+            );
+            const aircraftTypes = aircraftsSnapshot.docs.map((doc) => ({
+                id: doc.id,
+                name: doc.data().name, // Assuming 'name' is the field in Firestore containing the aircraft type
+            }));
+            console.log('Retrieved aircraft types:', aircraftTypes); // Log retrieved data
+            return aircraftTypes;
+        };
+
+        //console.log('Before calling getAircraftTypes');
+        const aircraftTypes = await getAircraftTypes();
+
+        const updateAircraftDropdown = async () => {
+            const aircraftDropdown = document.getElementById('aircraft');
+            aircraftDropdown.innerHTML = '';
+
+            // Add "Choose an Aircraft" option as the default
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = 'Choose an Aircraft';
+            aircraftDropdown.appendChild(defaultOption);
+
+            // Populate dropdown with aircraft types
+            const aircraftTypes = await getAircraftTypes();
+            aircraftTypes.forEach((aircraft) => {
+                const option = document.createElement('option');
+                option.value = aircraft.id;
+                option.textContent = aircraft.name;
+                aircraftDropdown.appendChild(option);
+            });
+        };
+
+        // Event listener for aircraft dropdown change
+        document
+            .getElementById('aircraft')
+            .addEventListener('change', async (event) => {
+                const selectedAircraftId = event.target.value;
+                if (selectedAircraftId) {
+                    const selectedAircraft = aircraftTypes.find(
+                        (aircraft) => aircraft.id === selectedAircraftId
+                    );
+                    if (selectedAircraft) {
+                        const selectedAircraftName = selectedAircraft.name;
+                        console.log('Selected Aircraft Name:', selectedAircraftName);
+                    }
+                }
+            });
+
+        // Initial population of aircraft dropdown
+        updateAircraftDropdown();
+
+        const getImageUrlFromStorage = async (imageName) => {
+            try {
+                // Construct the full path to the image in storage using the document ID
+                const path = `Aircraft Pictures/${imageName}.jpg`;
+
+                // Create a reference to the image in storage
+                const imageRef = ref(storage, path);
+
+                // Get the download URL of the image
+                const imageUrl = await getDownloadURL(imageRef);
+
+                return imageUrl; // Return the URL
+            } catch (error) {
+                console.error('Error retrieving image URL:', error);
+                return null; // Return null in case of error
+            }
+        };
+
+        // -------------------------------Function to fetch and display aircraft image
+        const displayAircraftImage = async (aircraftId) => {
+            const imageUrl = await getImageUrlFromStorage(aircraftId);
+            const imageContainer = document.getElementById(
+                'aircraftImageContainer'
+            );
+            imageContainer.innerHTML = ''; // Clear existing image
+            if (imageUrl) {
+                const image = document.createElement('img');
+                image.src = imageUrl;
+                image.alt = 'Aircraft Image';
+                imageContainer.appendChild(image);
+            }
+        };
+
+        //-------------------------------- Function to fetch airport data from JSON file
+        const fetchAirportData = async () => {
+            try {
+                const response = await fetch('/airports.json');
+                const data = await response.json();
+
+                const airports = Object.values(data).map((airport) => ({
+                    name: airport.name,
+                    icao: airport.icao,
+                    latitude: airport.lat,
+                    longitude: airport.lon,
+                    city: airport.city,
+                    timeZone: airport.tz,
+                    country: airport.country,
+                    state: airport.state,
+                }));
+
+                return airports;
+            } catch (error) {
+                console.error('Error fetching airport data:', error);
+                return [];
+            }
+        };
+
+        // -------------------------------------------------------FILTER BASED ON USER INPUT
+        const filterAirports = (inputValue) => {
+            const userInput = inputValue.toLowerCase();
+
+            const filteredAirports = airports.filter((airport) => {
+                return (
+                    airport.name.toLowerCase().includes(userInput) ||
+                    airport.icao.toLowerCase().includes(userInput) ||
+                    airport.city.toLowerCase().includes(userInput)
+                );
+            });
+
+            return filteredAirports;
+        };
+
+        // ------------------------------------------------------UPDATE DROPDOWNS
+        const updateAirportDropdown = (filteredAirports) => {
+            const airportDropdown = document.getElementById(
+                'departureAirportDropdown'
+            );
+            airportDropdown.innerHTML = '';
+
+            filteredAirports.forEach((airport) => {
+                const option = document.createElement('div');
+                option.textContent = `${airport.city}: ${airport.name} (${airport.icao})`;
+                option.addEventListener('click', () => {
+                    document.getElementById(
+                        'airportInput'
+                    ).value = `${airport.name} (${airport.icao})`;
+                    airportDropdown.innerHTML = '';
+                    return;
+                });
+                airportDropdown.appendChild(option);
+            });
+        };
+
+        const updateArrivalCityDropdown = (filteredAirports) => {
+            const arrivalCityDropdown = document.getElementById(
+                'arrivalCityDropdown'
+            );
+            arrivalCityDropdown.innerHTML = '';
+
+            filteredAirports.forEach((airport) => {
+                const option = document.createElement('div');
+                option.textContent = `${airport.city}: ${airport.name} (${airport.icao})`;
+                option.addEventListener('click', () => {
+                    document.getElementById(
+                        'arrivalCityInput'
+                    ).value = `${airport.name} (${airport.icao})`;
+                    arrivalCityDropdown.innerHTML = '';
+                    return;
+                });
+                arrivalCityDropdown.appendChild(option);
+            });
+        };
+
+        // ----------------------------------EVENT LISTENERS FOR DEPARTURE AIRPORT DROPDOWN
+
+        document
+            .getElementById('airportInput')
+            .addEventListener('input', async (event) => {
+                const inputValue = event.target.value.trim(); // Trim whitespace
+                const airportDropdown = document.getElementById('airportDropdown');
+                if (inputValue === '') {
+                    airportDropdown.innerHTML = ''; // Clear the dropdown if input field is empty
+                    return;
+                }
+                const filteredAirports = filterAirports(inputValue);
+                updateAirportDropdown(filteredAirports);
+            });
+
+        document
+            .getElementById('departureAirportDropdown')
+            .addEventListener('click', async (event) => {
+                const selectedOption = event.target.textContent; // Get the selected option
+                const parts = selectedOption.split('('); // Split the string by '('
+                const icaoCode = parts[1].replace(')', '').trim(); // Extract ICAO code
+
+                try {
+                    // Fetch airport data from JSON file
+                    const response = await fetch('/airports.json');
+                    const data = await response.json();
+
+                    // Find the airport data corresponding to the selected ICAO code
+                    const selectedAirport = Object.values(data).find(
+                        (airport) => airport.icao === icaoCode
+                    );
+
+                    // Log the selectedAirport object to inspect its structure
+                    console.log(selectedAirport);
+
+                    if (selectedAirport) {
+                        document.getElementById('airportName').innerHTML =
+                            selectedAirport.name;
+                        document.getElementById('airportCity').innerHTML =
+                            selectedAirport.city;
+                        document.getElementById('airportICAO').innerHTML =
+                            selectedAirport.icao;
+                        document.getElementById('airportLatitude').innerHTML =
+                            selectedAirport.lat;
+                        document.getElementById('airportLongitude').innerHTML =
+                            selectedAirport.lon;
+                        document.getElementById('airportTimeZone').innerHTML =
+                            selectedAirport.tz;
+                        document.getElementById('airportCountry').innerHTML =
+                            selectedAirport.country;
+                        document.getElementById('airportState').innerHTML =
+                            selectedAirport.state;
+                    }
+                } catch (error) {
+                    console.error('Error fetching airport data:', error);
+                }
+            });
+
+        // ----------------------------------EVENT LISTENERS FOR ARRIVAL AIRPORT DROPDOWN
+
+        document
+            .getElementById('arrivalCityInput')
+            .addEventListener('input', async (event) => {
+                const inputValue = event.target.value.trim(); // Trim whitespace
+                const arrivalCityDropdown = document.getElementById(
+                    'arrivalCityDropdown'
+                );
+                if (inputValue === '') {
+                    arrivalCityDropdown.innerHTML = ''; // Clear the dropdown if input field is empty
+                    return;
+                }
+                const filteredAirports = filterAirports(inputValue);
+                updateArrivalCityDropdown(filteredAirports);
+            });
+
+        document
+            .getElementById('arrivalCityDropdown')
+            .addEventListener('click', async (event) => {
+                const selectedOption = event.target.textContent; // Get the selected option
+                const parts = selectedOption.split('('); // Split the string by '('
+                const icaoCode = parts[1].replace(')', '').trim(); // Extract ICAO code
+
+                try {
+                    // Fetch airport data from JSON file
+                    const response = await fetch('/airports.json');
+                    const data = await response.json();
+
+                    // Find the airport data corresponding to the selected ICAO code
+                    const selectedAirport = Object.values(data).find(
+                        (airport) => airport.icao === icaoCode
+                    );
+
+                    // Log the selectedAirport object to inspect its structure
+                    console.log(selectedAirport);
+
+                    if (selectedAirport) {
+                        document.getElementById('airportNamea').innerHTML =
+                            selectedAirport.name;
+                        document.getElementById('airportCitya').innerHTML =
+                            selectedAirport.city;
+                        document.getElementById('airportICAOa').innerHTML =
+                            selectedAirport.icao;
+                        document.getElementById('airportLatitudea').innerHTML =
+                            selectedAirport.lat;
+                        document.getElementById('airportLongitudea').innerHTML =
+                            selectedAirport.lon;
+                        document.getElementById('airportTimeZonea').innerHTML =
+                            selectedAirport.tz;
+                        document.getElementById('airportCountrya').innerHTML =
+                            selectedAirport.country;
+                        document.getElementById('airportStatea').innerHTML =
+                            selectedAirport.state;
+                    }
+                } catch (error) {
+                    console.error('Error fetching airport data:', error);
+                }
+            });
+
+        // Initialize airport data
+        fetchAirportData().then((airports) => {
+            // Store the airport data globally
+            window.airports = airports;
+        });
+
+        // ---------------------------------------------------- EXPORT FLIGHT DATA TO DOM AND JSON
+
+        let publishedData = [];
+
+        document
+            .getElementById('registerButton')
+            .addEventListener('click', async () => {
+                //----------AIRCRAFT DATA
+                const selectedAircraftId = document.getElementById('aircraft').value;
+                const selectedAircraft = aircraftTypes.find(
+                    (aircraft) => aircraft.id === selectedAircraftId
+                );
+                const aircraftType = selectedAircraft ? selectedAircraft.name : ''; // Get the name of the selected aircraft
+
+                //------DEPARTURE AIRPORT DATA
+                const departureAirportName =
+                    document.getElementById('airportName').innerHTML;
+                const departureAirportCity =
+                    document.getElementById('airportCity').innerHTML;
+                const departureAirportIcao =
+                    document.getElementById('airportICAO').innerHTML;
+                const departureAirportLatitude =
+                    document.getElementById('airportLatitude').innerHTML;
+                const departureAirportLongitude =
+                    document.getElementById('airportLongitude').innerHTML;
+                const departureAirportTimeZone =
+                    document.getElementById('airportTimeZone').innerHTML;
+                const departureAirportCountry =
+                    document.getElementById('airportCountry').innerHTML;
+                const departureAirportState =
+                    document.getElementById('airportState').innerHTML;
+
+                //--------ARRIVAL AIRPORT DATA
+                const arrivalAirportName =
+                    document.getElementById('airportNamea').innerHTML;
+                const arrivalAirportCity =
+                    document.getElementById('airportCitya').innerHTML;
+                const arrivalAirportIcao =
+                    document.getElementById('airportICAOa').innerHTML;
+                const arrivalAirportLatitude =
+                    document.getElementById('airportLatitudea').innerHTML;
+                const arrivalAirportLongitude =
+                    document.getElementById('airportLongitudea').innerHTML;
+                const arrivalAirportTimeZone =
+                    document.getElementById('airportTimeZonea').innerHTML;
+                const arrivalAirportCountry =
+                    document.getElementById('airportCountrya').innerHTML;
+                const arrivalAirportState =
+                    document.getElementById('airportStatea').innerHTML;
+
+                //---------OTHER DATA
+
+                const flightPrice = document.getElementById('price').value;
+                const seats = document.getElementById('seats').value;
+                const departureDate = document.getElementById('departureDate').value;
+
+                //-------IMAGE
+
+                const imageUrl = await getImageUrlFromStorage(selectedAircraftId);
+                const aircraftImage = document.createElement('img');
+                aircraftImage.src = imageUrl;
+                aircraftImage.alt = 'Aircraft Image';
+                aircraftImage.style.width = '150px';
+                aircraftImage.style.height = '150px';
+
+                const infoDiv = document.createElement('div'); // Create a new container for each flight's information
+                const infoParagraph = document.createElement('p');
+
+                infoParagraph.innerHTML = `
+      <div>
+      <img src="${imageUrl}" alt="Aircraft Image" style="width: 150px; height: 150px;">
+      <ul>
+      <li>Aircraft Type: ${aircraftType}</li>
+      <li>Departure Airport Name: ${departureAirportName}</li>
+      <li>Departure Airport City: ${departureAirportCity}</li>
+      <li>Departure Airport ICAO Code: ${departureAirportIcao}</li>
+      <li>Departure Airport Latitude: ${departureAirportLatitude}</li>
+      <li>Departure Airport Longitude: ${departureAirportLongitude}</li>
+      <li>Departure Airport Time Zone: ${departureAirportTimeZone}</li>
+      <li>Departure Airport Country: ${departureAirportCountry}</li>
+      <li>Departure Airport State: ${departureAirportState}</li>
+      <li>Arrival Airport Name: ${arrivalAirportName}</li>
+      <li>Arrival Airport City: ${arrivalAirportCity}</li>
+      <li>Arrival Airport ICAO Code: ${arrivalAirportIcao}</li>
+      <li>Arrival Airport Latitude: ${arrivalAirportLatitude}</li>
+      <li>Arrival Airport Longitude: ${arrivalAirportLongitude}</li>
+      <li>Arrival Airport Time Zone: ${arrivalAirportTimeZone}</li>
+      <li>Arrival Airport Country: ${arrivalAirportCountry}</li>
+      <li>Arrival Airport State: ${arrivalAirportState}</li>
+      <li>Price: ${flightPrice}</li>
+      <li>Seats: ${seats}</li>
+      <li>Departure Date: ${departureDate}</li>
+      </ul>
+      </div>
+      `;
+
+                // Append the created elements to the info div
+                infoDiv.appendChild(infoParagraph);
+                //infoDiv.appendChild(aircraftImage);
+
+                // Append the info div to the published info div
+                const publishedInfoDiv = document.getElementById('publishedInfo');
+                publishedInfoDiv.appendChild(infoDiv);
+
+                // Clear input fields
+                document.getElementById('airportInput').value = '';
+                document.getElementById('airportName').value = '';
+                document.getElementById('airportCity').value = '';
+                document.getElementById('airportICAO').value = '';
+                document.getElementById('airportLatitude').value = '';
+                document.getElementById('airportLongitude').value = '';
+                document.getElementById('airportTimeZone').value = '';
+                document.getElementById('airportCountry').value = '';
+                document.getElementById('airportState').value = '';
+                document.getElementById('airportNamea').value = '';
+                document.getElementById('arrivalCityInput').value = '';
+                document.getElementById('airportCitya').value = '';
+                document.getElementById('airportICAOa').value = '';
+                document.getElementById('airportLatitudea').value = '';
+                document.getElementById('airportLongitudea').value = '';
+                document.getElementById('airportTimeZonea').value = '';
+                document.getElementById('airportCountrya').value = '';
+                document.getElementById('departureDate').value = '';
+                document.getElementById('price').value = '';
+                document.getElementById('seats').value = '';
+
+                //------------Construct JSON object
+
+                try {
+                    const jsonData = {
+                        aircraftType,
+                        departureAirportName,
+                        departureAirportCity,
+                        departureAirportIcao,
+                        departureAirportLatitude,
+                        departureAirportLongitude,
+                        departureAirportTimeZone,
+                        departureAirportCountry,
+                        departureAirportState,
+                        arrivalAirportName,
+                        arrivalAirportCity,
+                        arrivalAirportIcao,
+                        arrivalAirportLatitude,
+                        arrivalAirportLongitude,
+                        arrivalAirportTimeZone,
+                        arrivalAirportCountry,
+                        departureDate,
+                        flightPrice,
+                        seats,
+                        imageUrl,
+                        arrivalAirportState,
+                    };
+
+                    publishedData.push(jsonData);
+
+                    //Log JSON object to console
+                    console.log(jsonData);
+
+                    // Log success message
+                    console.log('Flight registered successfully!');
+                } catch (error) {
+                    // Log error message
+                    console.error('Error registering flight:', error);
+                }
+            });
+
+        function generateUUID() {
+            let dt = new Date().getTime();
+            const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(
+                /[xy]/g,
+                function (c) {
+                    const r = (dt + Math.random() * 16) % 16 | 0;
+                    dt = Math.floor(dt / 16);
+                    return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
+                }
+            );
+            return uuid;
+        }
+
+        document
+            .getElementById('uploadInfoButton')
+            .addEventListener('click', async () => {
+                try {
+                    // Check if jsonData is defined and not empty
+                    if (publishedData.length > 0) {
+                        // Loop through each item in publishedData array
+                        for (const flightData of publishedData) {
+                            // Append additional parameters
+                            flightData.authToken = 'Wwmh3mUG3fdtZ6HejY42S0PU7NT2';
+                            flightData.id = generateUUID();
+                            flightData.is_parked = 'false';
+                            flightData.timestamp = serverTimestamp();
+
+                            // Upload JSON object to Firestore
+                            await addDoc(collection(db, 'Productss'), flightData);
+                        }
+                        // Log success message
+                        console.log('Data uploaded to Firestore successfully!');
+                        // Clear publishedData array after uploading
+                        publishedData = [];
+                    } else {
+                        console.error('No data to upload!');
+                    }
+                } catch (error) {
+                    // Log error message
+                    console.error('Error uploading data to Firestore:', error);
+                }
+            });
+
+    </script>
+</body>
+
+</html>
